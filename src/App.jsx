@@ -1,21 +1,58 @@
 import './index.css'
+import './audio_player.css'
 import Countdown from './Countdown'
+import { useState, useRef } from "react";
+import NowPlaying from "./AudioPlayer.jsx";
+
+// Explicitly import assets so Vite can bundle them correctly
+import coverArt from "./assets/images/Oh_No.jpg";
+import audioTrack from "./assets/audio/Biig_Piig_Oh_No.mp3";
 
 function App() {
-  return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#C41F5E] from-0%  to-bubblegum-pink-1000 to-30%">
-      {/* Radial glow overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(200,5,98,0.25)_0%,_transparent_70%)]" />
+    const audioRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [current] = useState({
+        title: "Oh No",
+        artist: "Biig Piig",
+        album: "The Sky Is Bleeding",
+        artUrl: coverArt,
+        src: audioTrack,
+    });
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center gap-10 px-4">
+    const togglePlay = () => {
+        if (audioRef.current) {
+            if (isPlaying) {
+                audioRef.current.pause();
+            } else {
+                audioRef.current.play();
+            }
+            setIsPlaying(!isPlaying);
+        }
+    };
 
-        {/* FlipDown widget */}
-        <Countdown />
-
-      </div>
-    </div>
-  )
+    return (
+        <>
+            <audio ref={audioRef} src={current.src} loop />
+            <main className="w-full min-h-screen bg-transparent">
+                <Countdown/>
+            </main>
+            
+            {/* Position the audio player: top-center on mobile, bottom-right on desktop */}
+            <div 
+                className="fixed top-6 left-1/2 -translate-x-1/2 md:top-auto md:bottom-6 md:right-6 md:left-auto md:translate-x-0 z-50 cursor-pointer hover:scale-105 transition-transform shadow-xl rounded-xl"
+                onClick={togglePlay}
+                title="Click to play/pause audio"
+            >
+                <NowPlaying
+                    title={current.title}
+                    artist={current.artist}
+                    album={current.album}
+                    artUrl={current.artUrl}
+                    isPlaying={isPlaying}
+                />
+            </div>
+        </>
+    )
 }
 
 export default App
