@@ -1,0 +1,218 @@
+/* ─── FlipDown: bubblegum-pink theme ──────────────────────────────── */
+
+/* Base container – use flexbox row so groups sit side by side */
+.flipdown {
+  overflow: visible !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  gap: 32px !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* ── Rotor group ──────────────────────────────────────────────────── */
+.flipdown .rotor-group {
+  position: relative;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  float: none !important;
+  padding-right: 0 !important;
+  width: 206px !important;
+}
+
+.flipdown .rotor-group:last-child {
+  padding-right: 0 !important;
+}
+
+/* ── Headings – full width so they sit on their own line above rotors */
+.flipdown .rotor-group-heading {
+  width: 100% !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  overflow: visible !important;
+}
+
+.flipdown .rotor-group-heading:before {
+  display: block;
+  white-space: nowrap !important;
+  height: 56px !important;
+  line-height: 56px !important;
+  text-align: center;
+  font-family: var(--font-melodrama) !important;
+  font-weight: 400;
+  font-size: 56px !important;
+  letter-spacing: 0;
+  color: var(--color-bubblegum-pink-800) !important;
+}
+
+.flipdown .rotor-group:nth-child(1) .rotor-group-heading:before { content: attr(data-before); }
+.flipdown .rotor-group:nth-child(2) .rotor-group-heading:before { content: attr(data-before); }
+.flipdown .rotor-group:nth-child(3) .rotor-group-heading:before { content: attr(data-before); }
+.flipdown .rotor-group:nth-child(4) .rotor-group-heading:before { content: attr(data-before); }
+
+/* ── Hide default colon delimiters ────────────────────────────────── */
+.flipdown .rotor-group:nth-child(n+2):nth-child(-n+3):before,
+.flipdown .rotor-group:nth-child(n+2):nth-child(-n+3):after {
+  display: none;
+}
+
+/* ── Rotor (individual digit card) ────────────────────────────────── */
+.flipdown .rotor {
+  position: relative;
+  float: none !important;
+  width: 100px !important;
+  height: 180px !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+  font-family: var(--font-bonny) !important;
+  font-size: 128px !important;
+  font-weight: 400;
+  text-align: center;
+  perspective: 300px;
+  border: 2px solid var(--color-bubblegum-pink-700) !important;
+}
+
+.flipdown .rotor:last-child {
+  margin-right: 0;
+}
+
+/* ── Top / bottom halves ──────────────────────────────────────────── */
+.flipdown .rotor-top,
+.flipdown .rotor-bottom {
+  overflow: hidden;
+  position: absolute;
+  width: 100px !important;
+  height: 90px !important;
+}
+
+/* ── Colors ────────────────────────────────────────────────────────── */
+/* Top half */
+.flipdown .rotor,
+.flipdown .rotor-top,
+.flipdown .rotor-leaf-front {
+  color: var(--color-bubblegum-pink-1000) !important;
+  background: var(--color-bubblegum-pink-900) !important;
+}
+
+/* Bottom half */
+.flipdown .rotor-bottom,
+.flipdown .rotor-leaf-rear {
+  color: var(--color-bubblegum-pink-1000) !important;
+  background: var(--color-bubblegum-pink-900) !important;
+}
+
+/* Hinge line */
+.flipdown .rotor:after {
+  content: '';
+  z-index: 2;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px !important;
+  height: 90px !important;
+  border-radius: 0 0 8px 8px;
+  border-top: solid 1.5px var(--color-bubblegum-pink-1000) !important;
+}
+
+/* ── Leaf (flip animation layer) ──────────────────────────────────── */
+.flipdown .rotor-leaf {
+  z-index: 1;
+  position: absolute;
+  width: 100px !important;
+  height: 180px !important;
+  transform-style: preserve-3d;
+  transition: transform 0s;
+}
+
+.flipdown .rotor-leaf.flipped {
+  transform: rotateX(-180deg);
+  transition: all 0.5s ease-in-out;
+}
+
+.flipdown .rotor-leaf-front,
+.flipdown .rotor-leaf-rear {
+  overflow: hidden;
+  position: absolute;
+  width: 100px !important;
+  height: 90px !important;
+  margin: 0;
+  transform: rotateX(0deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flipdown .rotor-leaf-front {
+  line-height: 180px !important;
+  border-radius: 8px 8px 0 0;
+}
+
+.flipdown .rotor-leaf-rear {
+  line-height: 0 !important;
+  border-radius: 0 0 8px 8px;
+  transform: rotateX(-180deg);
+}
+
+.flipdown .rotor-top {
+  line-height: 180px !important;
+  border-radius: 8px 8px 0 0;
+}
+
+.flipdown .rotor-bottom {
+  bottom: 0;
+  line-height: 0 !important;
+  border-radius: 0 0 8px 8px;
+}
+
+/* ─── Responsive (mobile) ─────────────────────────────────────────── */
+@media (max-width: 550px) {
+  .flipdown {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 32px !important;
+  }
+
+  .flipdown .rotor-group {
+    gap: 6px !important;
+    width: 166px !important; /* 80px + 6px + 80px */
+  }
+
+  .flipdown .rotor {
+    width: 80px !important;
+    height: 120px !important;
+    font-size: 128px !important;
+    border-radius: 8px !important;
+  }
+
+  .flipdown .rotor-leaf {
+    width: 80px !important;
+    height: 120px !important;
+  }
+
+  .flipdown .rotor-leaf-front,
+  .flipdown .rotor-leaf-rear,
+  .flipdown .rotor-top,
+  .flipdown .rotor-bottom,
+  .flipdown .rotor:after {
+    width: 80px !important;
+    height: 60px !important;
+  }
+
+  .flipdown .rotor-leaf-front,
+  .flipdown .rotor-top {
+    line-height: 120px !important;
+  }
+
+  .flipdown .rotor:after {
+    border-radius: 0 0 8px 8px !important;
+  }
+
+  .flipdown .rotor-group-heading:before {
+    font-size: 48px !important;
+    height: 48px !important;
+    line-height: 48px !important;
+  }
+}
