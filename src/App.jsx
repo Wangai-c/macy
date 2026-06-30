@@ -2,8 +2,10 @@ import './index.css'
 import './audio_player.css'
 import Intro from './Intro'
 import Countdown from './Countdown'
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import NowPlaying from "./AudioPlayer.jsx";
+import { useViewTracking } from './hooks/useViewTracking';
+import { initTrackingSender } from './utils/trackingSender';
 
 // We will let the individual pages handle their own track imports
 
@@ -13,6 +15,14 @@ function App() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentPage, setCurrentPage] = useState('countdown');
     const [current, setCurrent] = useState(null);
+
+    // --- Interaction Tracking ---
+    const { markAudioPlayed } = useViewTracking(currentPage);
+
+    useEffect(() => {
+        const cleanup = initTrackingSender();
+        return cleanup;
+    }, []);
 
     const setAudioTrack = (trackInfo) => {
         setCurrent(prev => {
@@ -31,6 +41,7 @@ function App() {
                 audioRef.current.pause();
             } else {
                 audioRef.current.play();
+                markAudioPlayed();
             }
             setIsPlaying(!isPlaying);
         }
@@ -76,7 +87,7 @@ function App() {
                 {/* Floating Button */}
                 <button 
                    onClick={() => setCurrentPage(currentPage === 'countdown' ? 'intro' : 'countdown')}
-                   className={`fixed bottom-8 right-8 z-[0] flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-1000 hover:scale-110 active:scale-95 ${
+                   className={`fixed bottom-8 right-8 z-[9999] flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-1000 hover:scale-110 active:scale-95 ${
                        currentPage === 'countdown' 
                        ? 'bg-bubblegum-pink-300 text-bubblegum-pink-1000 shadow-bubblegum-pink-900/50' 
                        : 'bg-blue-100 text-blue-900 shadow-blue-900/50'
@@ -93,6 +104,8 @@ function App() {
                        </svg>
                    )}
                 </button>
+
+
             </main>
         </>
     )
