@@ -62,7 +62,7 @@ export default function Countdown({ audioPlayer, setAudioTrack, isActive }) {
         
         {/* Audio Player Wrapper */}
         {audioPlayer && (
-          <div className="mt-8 w-full max-w-[340px]">
+          <div className="w-[90%] max-w-[340px] fixed top-6 left-1/2 -translate-x-1/2 z-50 sm:static sm:translate-x-0 sm:mt-8 sm:w-full">
             {audioPlayer}
           </div>
         )}
