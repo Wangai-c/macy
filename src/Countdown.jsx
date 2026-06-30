@@ -2,7 +2,23 @@ import { useEffect } from 'react'
 import FlipDown from './flipdown'
 import './countdown.css'
 
-export default function Countdown() {
+// Import assets for Vite bundling
+import shapeOfYouCover from './assets/images/shape_of_you_cover.jpg';
+import shapeOfYouTrack from './assets/audio/Shape_of_You.mp3';
+
+export default function Countdown({ audioPlayer, setAudioTrack, isActive }) {
+  useEffect(() => {
+    if (isActive && setAudioTrack) {
+      setAudioTrack({
+        title: "Shape of You",
+        artist: "Ed Sheeran",
+        album: "Divide",
+        artUrl: shapeOfYouCover,
+        src: shapeOfYouTrack,
+      });
+    }
+  }, [isActive, setAudioTrack]);
+
   useEffect(() => {
     // Clear any previous FlipDown DOM (handles React StrictMode double-mount)
     const container = document.getElementById('flipdown')
@@ -43,6 +59,13 @@ export default function Countdown() {
         <div className="flex justify-center w-full">
           <div id="flipdown" className="flipdown"></div>
         </div>
+        
+        {/* Audio Player Wrapper */}
+        {audioPlayer && (
+          <div className="mt-8 w-full max-w-[340px]">
+            {audioPlayer}
+          </div>
+        )}
       </div>
     </div>
   )

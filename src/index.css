@@ -28,6 +28,17 @@
   --color-bubblegum-pink-900: #C90562;
   --color-bubblegum-pink-1000: #5E0F2D;
 
+  --color-blue-50: #DFF2FE;
+  --color-blue-100: #88C9F9;
+  --color-blue-200: #6BBBF4;
+  --color-blue-300: #55ACEE;
+  --color-blue-400: #2F90E5;
+  --color-blue-500: #006FD9;
+  --color-blue-600: #005FC0;
+  --color-blue-700: #0055A6;
+  --color-blue-800: #00498E;
+  --color-blue-900: #003B73;
+
   --font-bonny: "Bonny Variable", "Bonny", serif;
   --font-melodrama: "Melodrama Variable", "Melodrama", serif;
 }
