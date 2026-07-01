@@ -10,7 +10,7 @@ import { readSession, markAsSent, hasViewData } from './trackingStorage';
 //  Flip to `true` when you want tracking to actually send.
 //  Leave `false` during local dev to avoid CORS / wasted submissions.
 // ============================================================
-const TRACKING_ENABLED = false;
+const TRACKING_ENABLED = true;
 // ============================================================
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xeeblbbj';
