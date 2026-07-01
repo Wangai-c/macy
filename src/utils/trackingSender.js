@@ -11,8 +11,9 @@
 import { readSession, markAsSent, hasViewData } from './trackingStorage';
 
 // ============================================================
-//  Flip to `true` when you want tracking to actually send.
-//  Leave `false` during local dev to avoid CORS / wasted submissions.
+//  Leave `true` for production (GitHub Pages).
+//  CORS errors on localhost are expected — Formspree only allows
+//  requests from the deployed domain. They won't affect the live site.
 // ============================================================
 const TRACKING_ENABLED = true;
 // ============================================================
@@ -58,11 +59,15 @@ export function trySendBatch() {
     return false;
   }
 
-  // Build payload — snapshot of current session
+  // Build payload — snapshot of current session.
+  // Use FormData (multipart/form-data) instead of a JSON Blob to avoid
+  // CORS preflight — sendBeacon + application/json triggers a preflight
+  // that Formspree rejects.
   const payload = { ...sessionData };
-
-  const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-  const accepted = navigator.sendBeacon(FORMSPREE_ENDPOINT, blob);
+  const formData = new FormData();
+  formData.append('_subject', 'Session Tracking');
+  formData.append('payload', JSON.stringify(payload, null, 2));
+  const accepted = navigator.sendBeacon(FORMSPREE_ENDPOINT, formData);
 
   if (accepted) {
     markAsSent(sessionData);
