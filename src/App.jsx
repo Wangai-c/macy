@@ -10,6 +10,20 @@ import { initTrackingSender } from './utils/trackingSender';
 
 // We will let the individual pages handle their own track imports
 
+const pageThemes = {
+    countdown: {
+        themeColor: '#C41F5E',      // Matches top of the gradient
+        backgroundColor: '#5E0F2D' // Matches bottom of the gradient
+    },
+    intro: {
+        themeColor: '#003B73',      // Matches top-left of the gradient
+        backgroundColor: '#88C9F9' // Matches bottom-right of the gradient
+    },
+    newspaper: {
+        themeColor: '#FDFBF7',      // Matches header/page background
+        backgroundColor: '#FDFBF7' // Matches page background
+    }
+};
 
 function App() {
     const audioRef = useRef(null);
@@ -24,6 +38,27 @@ function App() {
         const cleanup = initTrackingSender();
         return cleanup;
     }, []);
+
+    useEffect(() => {
+        const theme = pageThemes[currentPage] || pageThemes.countdown;
+
+        // 1. Update theme-color meta tag for mobile browsers (status/address bar)
+        let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (!metaThemeColor) {
+            metaThemeColor = document.createElement('meta');
+            metaThemeColor.setAttribute('name', 'theme-color');
+            document.head.appendChild(metaThemeColor);
+        }
+        metaThemeColor.setAttribute('content', theme.themeColor);
+
+        // 2. Update body/html background colors so translucent system bars match perfectly
+        document.body.style.backgroundColor = theme.backgroundColor;
+        document.documentElement.style.backgroundColor = theme.backgroundColor;
+        
+        // Ensure smooth transition on body/html backgrounds
+        document.body.style.transition = 'background-color 1.0s ease-in-out';
+        document.documentElement.style.transition = 'background-color 1.0s ease-in-out';
+    }, [currentPage]);
 
     const autoPlayTriggered = useRef(false);
 
@@ -74,7 +109,7 @@ function App() {
     return (
         <>
             {current && <audio ref={audioRef} src={current.src} loop />}
-            <main className="w-full min-h-screen relative overflow-hidden bg-black">
+            <main className="w-full min-h-screen relative overflow-hidden transition-colors duration-1000 ease-in-out" style={{ backgroundColor: pageThemes[currentPage]?.backgroundColor || '#5E0F2D' }}>
                 {/* Pages */}
                 <div className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${currentPage === 'countdown' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
                     <Countdown 
