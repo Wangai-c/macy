@@ -2,7 +2,10 @@
  * useViewTracking.js
  * Combines useActiveTime + useScrollDepth.
  * Flushes a per-view session record to the localStorage buffer
- * on view change, unmount, and page hide.
+ * on view change, unmount, and page hide — then triggers sendBatch.
+ *
+ * The flush→send ordering is guaranteed because this hook does both
+ * synchronously: flush to localStorage, then call trySendBatch().
  */
 
 import { useRef, useEffect, useCallback } from 'react';
@@ -14,6 +17,7 @@ import {
   writeSession,
   appendViewRecord,
 } from '../utils/trackingStorage';
+import { trySendBatch } from '../utils/trackingSender';
 
 // Module-level session reference — shared across all instances in the same tab
 let sessionData = null;
@@ -35,7 +39,6 @@ export function useViewTracking(viewKey) {
 
   const enteredAtRef = useRef(new Date().toISOString());
   const previousViewRef = useRef(viewKey);
-  const hasFlushedRef = useRef(false);
   const audioPlayedAtRef = useRef(null);
 
   // Core flush logic — writes one per-view record to the buffer
@@ -58,6 +61,16 @@ export function useViewTracking(viewKey) {
     appendViewRecord(session, previousViewRef.current, record);
   };
 
+  // Flush current view data, then tell the sender to ship it.
+  // After sending, re-sync the module-level session from localStorage
+  // so the in-memory reference doesn't resurrect already-sent data.
+  const flushAndSend = () => {
+    flush();
+    trySendBatch();
+    // Re-sync: sendBatch may have cleared views via markAsSent
+    sessionData = readSession();
+  };
+
   // On viewKey change → flush the previous view, reset for the new one
   useEffect(() => {
     if (previousViewRef.current !== viewKey) {
@@ -66,26 +79,25 @@ export function useViewTracking(viewKey) {
       resetScroll();
       enteredAtRef.current = new Date().toISOString();
       previousViewRef.current = viewKey;
-      hasFlushedRef.current = false;
       audioPlayedAtRef.current = null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewKey]);
 
-  // On unmount → flush
+  // On unmount → flush and send
   useEffect(() => {
     return () => {
-      flush();
+      flushAndSend();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // On visibilitychange → hidden: flush current view to buffer
-  // (trackingSender will then sendBeacon the full buffer)
+  // On visibilitychange → hidden: flush then send
+  // This guarantees the view record is in localStorage BEFORE sendBeacon fires
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
-        flush();
+        flushAndSend();
       }
     };
 
@@ -96,10 +108,10 @@ export function useViewTracking(viewKey) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewKey]);
 
-  // On pagehide → flush
+  // On pagehide → flush and send
   useEffect(() => {
     const handlePageHide = () => {
-      flush();
+      flushAndSend();
     };
 
     window.addEventListener('pagehide', handlePageHide);

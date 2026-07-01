@@ -2,6 +2,10 @@
  * trackingSender.js
  * Handles batched flush of tracking data via sendBeacon.
  * Wired up once at the app root — independent of which view is active.
+ *
+ * KEY DESIGN: The sender does NOT listen for visibilitychange/pagehide itself.
+ * Instead, useViewTracking flushes its data to localStorage first, THEN calls
+ * trySendBatch() directly. This guarantees ordering: flush → send.
  */
 
 import { readSession, markAsSent, hasViewData } from './trackingStorage';
@@ -38,9 +42,10 @@ function meetsMinimumEngagement(sessionData) {
 
 /**
  * Send the current session buffer via sendBeacon.
+ * Called by useViewTracking AFTER it has flushed view data to localStorage.
  * Returns true if the browser accepted the request.
  */
-function sendBatch() {
+export function trySendBatch() {
   if (!TRACKING_ENABLED) return false;
 
   const sessionData = readSession();
@@ -67,26 +72,17 @@ function sendBatch() {
 }
 
 /**
- * Initialize the sender listeners. Call once at app root mount.
- * Returns a cleanup function to remove listeners.
+ * Initialize the time-based backup sender. Call once at app root mount.
+ * Returns a cleanup function.
+ *
+ * NOTE: visibilitychange/pagehide sends are now handled by useViewTracking
+ * (flush-then-send), so this only sets up the periodic backup check.
  */
 export function initTrackingSender() {
-  // --- Leave-based flush ---
-  const handleVisibilityChange = () => {
-    if (document.visibilityState === 'hidden') {
-      sendBatch();
-    }
-  };
-
-  const handlePageHide = () => {
-    sendBatch();
-  };
-
-  document.addEventListener('visibilitychange', handleVisibilityChange);
-  window.addEventListener('pagehide', handlePageHide);
-
   // --- Time-based backup flush ---
   const backupInterval = setInterval(() => {
+    if (!TRACKING_ENABLED) return;
+
     const session = readSession();
     if (!session) return;
 
@@ -94,14 +90,12 @@ export function initTrackingSender() {
     const now = Date.now();
 
     if (now - lastSent > BACKUP_FLUSH_INTERVAL_MS && hasViewData(session)) {
-      sendBatch();
+      trySendBatch();
     }
-  }, 60 * 1000); // Check every minute whether the backup threshold has been exceeded
+  }, 60 * 1000); // Check every minute
 
   // Return cleanup
   return () => {
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
-    window.removeEventListener('pagehide', handlePageHide);
     clearInterval(backupInterval);
   };
 }
