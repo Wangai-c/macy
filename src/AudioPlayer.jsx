@@ -1,56 +1,52 @@
+import { useState } from 'react';
+
 const bars = [0, 0.2, 0.4];
 
-export default function NowPlaying({ title, artist, album, artUrl, isPlaying = false }) {
+export default function NowPlaying({ title, artist, album, artUrl, isPlaying = false, onTogglePlay }) {
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const handlePlayerClick = (e) => {
+        // On mobile viewports (<= 768px), if collapsed, expand first and do not play
+        if (!isExpanded && window.innerWidth <= 768) {
+            setIsExpanded(true);
+            e.stopPropagation();
+            return;
+        }
+
+        // Otherwise, trigger play/pause
+        if (onTogglePlay) {
+            onTogglePlay();
+        }
+    };
 
     return (
-        <div style={{
-            background: "rgba(255, 255, 255, 0.15)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(255, 255, 255, 0.3)",
-            borderRadius: 16,
-            padding: "12px 16px",
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            width: 320,
-            overflow: "hidden",
-            boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.2)",
-            color: "white",
-        }}>
+        <div 
+            className={`audio-player-container ${isExpanded ? 'expanded' : 'collapsed'} ${isPlaying ? 'playing' : ''}`}
+            onClick={handlePlayerClick}
+            title={isExpanded || window.innerWidth > 768 ? "Click to play/pause audio" : "Click to expand player"}
+        >
             {/* Album art */}
-            <div style={{
-                width: 44, height: 44, borderRadius: 8,
-                background: "rgba(255, 255, 255, 0.2)", flexShrink: 0,
-                overflow: "hidden", display: "flex",
-                alignItems: "center", justifyContent: "center",
-            }}>
+            <div className={`audio-player-art ${isPlaying ? 'playing' : ''}`}>
                 {artUrl
-                    ? <img src={artUrl} alt="Album art" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ? <img src={artUrl} alt="Album art" />
                     : <span style={{ fontSize: 20 }}>🎵</span>
                 }
             </div>
 
             {/* Track info */}
-            <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
-                <div style={{ overflow: "hidden", whiteSpace: "nowrap" }}>
-                  <span style={{
-                      fontSize: 15, fontWeight: 600,
-                      display: "inline-block",
-                      animation: "marquee 8s linear infinite",
-                      animationPlayState: isPlaying ? 'running' : 'paused',
-                      textShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                  }}>
+            <div className="audio-player-info">
+                <div className="audio-player-title-wrapper">
+                  <span className={`audio-player-title ${isPlaying ? 'playing' : ''}`}>
                     {title}
                   </span>
                 </div>
-                <p style={{ fontSize: 12, color: "rgba(255, 255, 255, 0.85)", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <p className="audio-player-subtitle">
                     {artist} · {album}
                 </p>
             </div>
 
             {/* Play/Pause Icon */}
-            <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "50%", background: "rgba(255, 255, 255, 0.2)", transition: "background 0.3s ease" }}>
+            <div className="audio-player-controls">
                 {isPlaying ? (
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{width: 16, height: 16, color: "white"}}>
                       <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clipRule="evenodd" />
@@ -63,19 +59,25 @@ export default function NowPlaying({ title, artist, album, artUrl, isPlaying = f
             </div>
 
             {/* Animated bars */}
-            <div style={{ display: "flex", gap: 2, alignItems: "center", height: 20, flexShrink: 0 }}>
+            <div className="audio-player-bars">
                 {bars.map((delay, i) => (
-                    <div key={i} style={{
-                        width: 3, height: 14,
-                        background: isPlaying ? "#ffffff" : "rgba(255, 255, 255, 0.4)",
-                        borderRadius: 2,
-                        transformOrigin: "bottom",
-                        animation: `pulseBar 0.9s ease-in-out ${delay}s infinite`,
-                        animationPlayState: isPlaying ? 'running' : 'paused',
-                        transition: "background-color 0.3s ease",
-                    }} />
+                    <div key={i} className="audio-player-bar" style={{ animationDelay: `${delay}s` }} />
                 ))}
             </div>
+
+            {/* Collapse button for mobile */}
+            <button 
+                className="audio-player-collapse"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setIsExpanded(false);
+                }}
+                title="Collapse player"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M14.78 14.78a.75.75 0 0 1-1.06 0L10 11.06 6.28 14.78a.75.75 0 0 1-1.06-1.06L8.94 10 5.22 6.28a.75.75 0 0 1 1.06-1.06L10 8.94l3.72-3.72a.75.75 0 1 1 1.06 1.06L11.06 10l3.72 3.72a.75.75 0 0 1 0 1.06Z" clipRule="evenodd" />
+                </svg>
+            </button>
         </div>
     );
 }

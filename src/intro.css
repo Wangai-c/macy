@@ -238,7 +238,7 @@
 }
 
 /* Staggered entrance animations */
-.intro-content-col > * {
+.intro-content-col > *:not(.intro-audio-wrapper) {
   animation: fadeSlideUp 0.6s ease-out both;
 }
 .intro-content-col > *:nth-child(1) { animation-delay: 0.1s; }
