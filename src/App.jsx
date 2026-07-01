@@ -95,6 +95,14 @@ function App() {
                 {/* Floating Button */}
                 <button 
                    onClick={() => {
+                       // Auto-play audio on first nav interaction
+                       if (!isPlaying && audioRef.current) {
+                           audioRef.current.play().then(() => {
+                               setIsPlaying(true);
+                               markAudioPlayed();
+                           }).catch(() => {});
+                       }
+
                        if (currentPage === 'countdown') setCurrentPage('intro');
                        else if (currentPage === 'intro') setCurrentPage('newspaper');
                        else setCurrentPage('countdown');
