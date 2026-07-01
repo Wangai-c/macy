@@ -114,7 +114,7 @@ function App() {
                        if (currentPage === 'countdown') setCurrentPage('intro');
                        else if (currentPage === 'intro') setCurrentPage('newspaper');
                    }}
-                   className={`fixed bottom-8 right-8 z-[9999] flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-1000 hover:scale-110 active:scale-95 ${
+                   className={`fixed bottom-8 right-8 z-[0] flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-1000 hover:scale-110 active:scale-95 ${
                        currentPage === 'countdown' 
                        ? 'bg-bubblegum-pink-300 text-bubblegum-pink-1000 shadow-bubblegum-pink-900/50' 
                        : 'bg-blue-100 text-blue-900 shadow-blue-900/50'
