@@ -16,6 +16,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Playfair Display Variable";
+  src: url("./assets/fonts/PlayfairDisplay-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-bubblegum-pink-100: #FFF3F8;
   --color-bubblegum-pink-200: #FEE5EF;
@@ -41,5 +49,6 @@
 
   --font-bonny: "Bonny Variable", "Bonny", serif;
   --font-melodrama: "Melodrama Variable", "Melodrama", serif;
+  --font-playfair: "Playfair Display Variable", "Playfair Display", serif;
 }
 

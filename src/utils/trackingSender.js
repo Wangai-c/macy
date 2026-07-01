@@ -6,6 +6,13 @@
 
 import { readSession, markAsSent, hasViewData } from './trackingStorage';
 
+// ============================================================
+//  Flip to `true` when you want tracking to actually send.
+//  Leave `false` during local dev to avoid CORS / wasted submissions.
+// ============================================================
+const TRACKING_ENABLED = false;
+// ============================================================
+
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xeeblbbj';
 
 // Time-based backup flush interval: 2 hours (in ms)
@@ -34,6 +41,8 @@ function meetsMinimumEngagement(sessionData) {
  * Returns true if the browser accepted the request.
  */
 function sendBatch() {
+  if (!TRACKING_ENABLED) return false;
+
   const sessionData = readSession();
   if (!sessionData || !hasViewData(sessionData)) {
     return false;
