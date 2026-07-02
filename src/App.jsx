@@ -5,7 +5,7 @@ import Countdown from './Countdown'
 import Newspaper from './Newspaper'
 import LittleThings from './LittleThings'
 import Videos from './Videos'
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import NowPlaying from "./AudioPlayer.jsx";
 import { useViewTracking } from './hooks/useViewTracking';
 import { initTrackingSender } from './utils/trackingSender';
@@ -35,11 +35,29 @@ const pageThemes = {
     }
 };
 
+const checkCountdownElapsed = () => {
+    const now = new Date();
+    const targetDate = new Date(now.getFullYear(), 6, 3); // July 3rd
+    return now.getTime() >= targetDate.getTime();
+};
+
 function App() {
     const audioRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [currentPage, setCurrentPage] = useState('countdown');
+    const [isCountdownElapsed, setIsCountdownElapsed] = useState(() => checkCountdownElapsed());
+    const [currentPage, setCurrentPage] = useState(() => {
+        return checkCountdownElapsed() ? 'intro' : 'countdown';
+    });
+    const [renderCountdown, setRenderCountdown] = useState(() => !checkCountdownElapsed());
     const [current, setCurrent] = useState(null);
+
+    const handleCountdownEnd = useCallback(() => {
+        setIsCountdownElapsed(true);
+        setCurrentPage('intro');
+        setTimeout(() => {
+            setRenderCountdown(false);
+        }, 1000);
+    }, []);
 
     // --- Interaction Tracking ---
     const { markAudioPlayed } = useViewTracking(currentPage);
@@ -121,13 +139,16 @@ function App() {
             {current && <audio ref={audioRef} src={current.src} loop />}
             <main className="w-full min-h-screen relative overflow-hidden transition-colors duration-1000 ease-in-out" style={{ backgroundColor: pageThemes[currentPage]?.backgroundColor || '#5E0F2D' }}>
                 {/* Pages */}
-                <div className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${currentPage === 'countdown' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-                    <Countdown 
-                        audioPlayer={audioPlayerWidget} 
-                        setAudioTrack={setAudioTrack} 
-                        isActive={currentPage === 'countdown'} 
-                    />
-                </div>
+                {renderCountdown && (
+                    <div className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${currentPage === 'countdown' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+                        <Countdown 
+                            audioPlayer={audioPlayerWidget} 
+                            setAudioTrack={setAudioTrack} 
+                            isActive={currentPage === 'countdown'} 
+                            onCountdownEnd={handleCountdownEnd}
+                        />
+                    </div>
+                )}
                 <div className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${currentPage === 'intro' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
                     <Intro 
                         audioPlayer={audioPlayerWidget} 
@@ -173,9 +194,15 @@ function App() {
                        else if (currentPage === 'intro') setCurrentPage('newspaper');
                        else if (currentPage === 'newspaper') setCurrentPage('littlethings');
                        else if (currentPage === 'littlethings') setCurrentPage('videos');
-                       else if (currentPage === 'videos') setCurrentPage('countdown');
+                       else if (currentPage === 'videos') {
+                           setCurrentPage(isCountdownElapsed ? 'intro' : 'countdown');
+                       }
                    }}
-                   className={`fixed bottom-8 right-8 z-[9999] flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-1000 hover:scale-110 active:scale-95 ${
+                   className={`fixed bottom-8 right-8 flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-1000 hover:scale-110 active:scale-95 ${
+                       isCountdownElapsed 
+                       ? 'z-[9999] opacity-100 pointer-events-auto' 
+                       : 'z-0 opacity-0 pointer-events-none'
+                   } ${
                        currentPage === 'countdown' 
                        ? 'bg-bubblegum-pink-300 text-bubblegum-pink-1000 shadow-bubblegum-pink-900/50' 
                        : currentPage === 'littlethings'

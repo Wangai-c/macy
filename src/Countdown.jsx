@@ -6,7 +6,7 @@ import './countdown.css'
 import shapeOfYouCover from './assets/images/shape_of_you_cover.jpg';
 import shapeOfYouTrack from './assets/audio/Shape_of_You.mp3';
 
-export default function Countdown({ audioPlayer, setAudioTrack, isActive }) {
+export default function Countdown({ audioPlayer, setAudioTrack, isActive, onCountdownEnd }) {
   useEffect(() => {
     if (isActive && setAudioTrack) {
       setAudioTrack({
@@ -37,6 +37,11 @@ export default function Countdown({ audioPlayer, setAudioTrack, isActive }) {
     const targetTime = Math.floor(targetDate.getTime() / 1000)
 
     const flipdown = new FlipDown(targetTime, 'flipdown', { theme: 'custom' })
+    
+    if (onCountdownEnd) {
+      flipdown.ifEnded(onCountdownEnd)
+    }
+    
     flipdown.start()
 
     return () => {
@@ -47,7 +52,7 @@ export default function Countdown({ audioPlayer, setAudioTrack, isActive }) {
       const el = document.getElementById('flipdown')
       if (el) el.innerHTML = ''
     }
-  }, [])
+  }, [onCountdownEnd])
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#C41F5E] from-0%  to-bubblegum-pink-1000 to-30%">
