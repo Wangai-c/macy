@@ -15,7 +15,7 @@ import { readSession, markAsSent, hasViewData } from './trackingStorage';
 //  CORS errors on localhost are expected — Formspree only allows
 //  requests from the deployed domain. They won't affect the live site.
 // ============================================================
-const TRACKING_ENABLED = true;
+const TRACKING_ENABLED = false;
 // ============================================================
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xeeblbbj';

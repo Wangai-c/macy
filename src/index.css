@@ -24,6 +24,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Gochi Hand";
+  src: url("./assets/fonts/GochiHand-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Indie Flower";
+  src: url("./assets/fonts/IndieFlower-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-bubblegum-pink-100: #FFF3F8;
   --color-bubblegum-pink-200: #FEE5EF;
@@ -50,5 +66,7 @@
   --font-bonny: "Bonny Variable", "Bonny", serif;
   --font-melodrama: "Melodrama Variable", "Melodrama", serif;
   --font-playfair: "Playfair Display Variable", "Playfair Display", serif;
+  --font-gochi: "Gochi Hand", cursive;
+  --font-indie: "Indie Flower", cursive;
 }
 
