@@ -8,9 +8,9 @@ export default function Newspaper({ audioPlayer, setAudioTrack, isActive }) {
         if (isActive) {
             setAudioTrack({
                 src: LookingAtMe,
-                title: "Shape of You",
-                artist: "Ed Sheeran",
-                album: "Divide",
+                title: "Looking at Me",
+                artist: "Sabrina Carpenter",
+                album: "Singular Act II",
                 artUrl: LookingAtMeCover
             });
         }
