@@ -162,7 +162,7 @@ function App() {
                        else if (currentPage === 'newspaper') setCurrentPage('littlethings');
                        else if (currentPage === 'littlethings') setCurrentPage('countdown');
                    }}
-                   className={`fixed bottom-8 right-8 z-[50] flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-1000 hover:scale-110 active:scale-95 ${
+                   className={`fixed bottom-8 right-8 z-[9999] flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-1000 hover:scale-110 active:scale-95 ${
                        currentPage === 'countdown' 
                        ? 'bg-bubblegum-pink-300 text-bubblegum-pink-1000 shadow-bubblegum-pink-900/50' 
                        : currentPage === 'littlethings'
