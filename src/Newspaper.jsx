@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import macyImage from './assets/svgs/macy_black_white.png';
-import shapeOfYouCover from './assets/images/shape_of_you_cover.jpg';
-import shapeOfYouAudio from './assets/audio/Shape_of_You.mp3';
+import LookingAtMeCover from './assets/images/Looking_at_me_cover.jpg';
+import LookingAtMe from './assets/audio/Looking at Me.mp3';
 
 export default function Newspaper({ audioPlayer, setAudioTrack, isActive }) {
     useEffect(() => {
         if (isActive) {
             setAudioTrack({
-                src: shapeOfYouAudio,
+                src: LookingAtMe,
                 title: "Shape of You",
                 artist: "Ed Sheeran",
                 album: "Divide",
-                artUrl: shapeOfYouCover
+                artUrl: LookingAtMeCover
             });
         }
     }, [isActive, setAudioTrack]);

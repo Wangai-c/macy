@@ -16,6 +16,8 @@ import smileWithStars from './assets/svgs/smile_with_stars.svg';
 import artCrown from './assets/svgs/art_crown.svg';
 import artRainbow from './assets/svgs/art_rainbow.svg';
 import artLeaf from './assets/svgs/art_leaf.svg'
+import Territory from './assets/audio/Territory.mp3'
+import TerritoryCover from './assets/images/Territory_cover.jpg'
 
 import { useViewTracking } from './hooks/useViewTracking';
 
@@ -48,11 +50,11 @@ export default function LittleThings({ audioPlayer, setAudioTrack, isActive }) {
     useEffect(() => {
         if (isActive) {
             setAudioTrack({
-                src: "/audio/track_little_things.mp3", // Assuming some path, they didn't specify so generic is fine
-                title: "The Little Things",
-                artist: "Macy",
+                src: Territory, // Assuming some path, they didn't specify so generic is fine
+                title: "Territory",
+                artist: "Sol Generation, Juanita",
                 album: "Memories",
-                artUrl: "/images/album_art.jpg"
+                artUrl: TerritoryCover
             });
         }
     }, [isActive, setAudioTrack]);
